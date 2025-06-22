@@ -4,7 +4,7 @@ This project contains a simple React implementation of a calculator inspired by 
 
 ## Running the app
 
-This project requires **Node.js 18** or later. If you use
+This project requires **Node.js 14.17.3** or later. If you use
 [nvm](https://github.com/nvm-sh/nvm), you can run `nvm use` inside `calc-app`
 and it will pick up the correct version from `.nvmrc`.
 
@@ -17,6 +17,6 @@ and it will pick up the correct version from `.nvmrc`.
    ```bash
    npm run dev
    ```
-3. Open `http://localhost:5173` in your browser.
+3. Open `http://localhost:3000` in your browser.
 
 Use `npm run build` to create a production build.

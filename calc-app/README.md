@@ -1,8 +1,8 @@
 # React Calculator
 
 This directory was bootstrapped with [Vite](https://vitejs.dev/) and contains a
-simple React implementation of a calculator. The app requires **Node.js 18** or
-later. If you use `nvm`, run `nvm use` to activate the version specified in
+simple React implementation of a calculator. The app requires **Node.js 14.17.3**
+or later. If you use `nvm`, run `nvm use` to activate the version specified in
 `.nvmrc`.
 
 ## Available scripts
