@@ -4,6 +4,10 @@ This project contains a simple React implementation of a calculator inspired by 
 
 ## Running the app
 
+This project requires **Node.js 18** or later. If you use
+[nvm](https://github.com/nvm-sh/nvm), you can run `nvm use` inside `calc-app`
+and it will pick up the correct version from `.nvmrc`.
+
 1. Navigate to the project folder and install dependencies:
    ```bash
    cd calc-app
