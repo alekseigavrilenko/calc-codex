@@ -7,6 +7,7 @@ function Calculator() {
   const [firstValue, setFirstValue] = useState(null)
   const [waitingForSecond, setWaitingForSecond] = useState(false)
   const [memory, setMemory] = useState(0)
+  const [expression, setExpression] = useState('')
 
   const inputDigit = (digit) => {
     if (waitingForSecond) {
@@ -33,6 +34,7 @@ function Calculator() {
     setFirstValue(null)
     setOperator(null)
     setWaitingForSecond(false)
+    setExpression('')
   }
 
   const clearEntry = () => {
@@ -48,11 +50,15 @@ function Calculator() {
 
     if (firstValue == null) {
       setFirstValue(inputValue)
+      setExpression(`${display} ${nextOperator}`)
     } else if (operator) {
       const currentValue = firstValue || 0
       const result = performCalculation[operator](currentValue, inputValue)
       setFirstValue(result)
       setDisplay(String(result))
+      setExpression(`${result} ${nextOperator}`)
+    } else {
+      setExpression(`${display} ${nextOperator}`)
     }
 
     setWaitingForSecond(true)
@@ -74,6 +80,7 @@ function Calculator() {
       const result = performCalculation[operator](currentValue, inputValue)
       setDisplay(String(result))
       setFirstValue(result)
+      setExpression(`${firstValue} ${operator} ${display} =`)
     }
     setOperator(null)
     setWaitingForSecond(true)
@@ -114,6 +121,7 @@ function Calculator() {
 
   return (
     <div className="calculator">
+      <div className="expression">{expression || '\u00A0'}</div>
       <div className="display">{display}</div>
       <div className="buttons">
         {buttons.map((btn) => (
