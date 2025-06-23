@@ -3,87 +3,112 @@ import './Calculator.css'
 
 function Calculator() {
   const [display, setDisplay] = useState('0')
-  const [operator, setOperator] = useState(null)
-  const [firstValue, setFirstValue] = useState(null)
-  const [waitingForSecond, setWaitingForSecond] = useState(false)
-  const [memory, setMemory] = useState(0)
   const [expression, setExpression] = useState('')
+  const [waitingForNew, setWaitingForNew] = useState(false)
+  const [afterEqual, setAfterEqual] = useState(false)
+  const [memory, setMemory] = useState(0)
 
   const inputDigit = (digit) => {
-    if (waitingForSecond) {
+    if (afterEqual) {
+      setExpression(String(digit))
       setDisplay(String(digit))
-      setWaitingForSecond(false)
+      setAfterEqual(false)
+      setWaitingForNew(false)
+      return
+    }
+
+    if (waitingForNew) {
+      setDisplay(String(digit))
+      setWaitingForNew(false)
+      setExpression((e) => e + digit)
     } else {
       setDisplay(display === '0' ? String(digit) : display + digit)
+      setExpression((e) => e + digit)
     }
   }
 
   const inputDecimal = () => {
-    if (waitingForSecond) {
+    if (afterEqual) {
       setDisplay('0.')
-      setWaitingForSecond(false)
+      setExpression('0.')
+      setAfterEqual(false)
+      setWaitingForNew(false)
+      return
+    }
+    if (waitingForNew) {
+      setDisplay('0.')
+      setExpression((e) => e + '0.')
+      setWaitingForNew(false)
       return
     }
     if (!display.includes('.')) {
       setDisplay(display + '.')
+      setExpression((e) => e + '.')
     }
   }
 
   const clearAll = () => {
     setDisplay('0')
-    setFirstValue(null)
-    setOperator(null)
-    setWaitingForSecond(false)
     setExpression('')
+    setWaitingForNew(false)
+    setAfterEqual(false)
   }
 
   const clearEntry = () => {
     setDisplay('0')
+    setWaitingForNew(true)
   }
 
   const toggleSign = () => {
     setDisplay(String(parseFloat(display) * -1))
   }
 
-  const handleOperator = (nextOperator) => {
-    const inputValue = parseFloat(display)
-
-    if (firstValue == null) {
-      setFirstValue(inputValue)
-      setExpression(`${display} ${nextOperator}`)
-    } else if (operator) {
-      const currentValue = firstValue || 0
-      const result = performCalculation[operator](currentValue, inputValue)
-      setFirstValue(result)
-      setDisplay(String(result))
-      setExpression(`${result} ${nextOperator}`)
-    } else {
-      setExpression(`${display} ${nextOperator}`)
+  const handleParenthesis = (paren) => {
+    if (afterEqual) {
+      setExpression(paren)
+      setDisplay('0')
+      setAfterEqual(false)
+      setWaitingForNew(true)
+      return
     }
 
-    setWaitingForSecond(true)
-    setOperator(nextOperator)
+    if (paren === '(') {
+      if (!waitingForNew && expression && /[0-9)]$/.test(expression)) {
+        setExpression((e) => e + '*' + paren)
+      } else {
+        setExpression((e) => e + paren)
+      }
+      setWaitingForNew(true)
+    } else {
+      setExpression((e) => e + paren)
+    }
   }
 
-  const performCalculation = {
-    '/': (first, second) => first / second,
-    '*': (first, second) => first * second,
-    '+': (first, second) => first + second,
-    '-': (first, second) => first - second,
-    '=': (first, second) => second,
+  const handleOperator = (nextOperator) => {
+    if (afterEqual) {
+      setExpression(display + nextOperator)
+      setAfterEqual(false)
+    } else if (waitingForNew) {
+      setExpression((e) => e.slice(0, -1) + nextOperator)
+    } else {
+      setExpression((e) => e + nextOperator)
+    }
+    setWaitingForNew(true)
   }
 
   const handleEqual = () => {
-    const inputValue = parseFloat(display)
-    if (operator && firstValue != null) {
-      const currentValue = firstValue
-      const result = performCalculation[operator](currentValue, inputValue)
+    try {
+      // Avoid evaluating trailing operator
+      const expr = waitingForNew ? expression.slice(0, -1) : expression
+      const result = Function(`"use strict"; return (${expr})`)()
       setDisplay(String(result))
-      setFirstValue(result)
-      setExpression(`${firstValue} ${operator} ${display} =`)
+      setExpression(expr + '=')
+    } catch {
+      setDisplay('Error')
+      setExpression('')
     }
-    setOperator(null)
-    setWaitingForSecond(true)
+    setAfterEqual(true)
+    setWaitingForNew(false)
   }
 
   const memoryClear = () => setMemory(0)
@@ -101,6 +126,8 @@ function Calculator() {
     { label: 'CE', onClick: clearEntry },
     { label: 'C', onClick: clearAll },
     { label: '±', onClick: toggleSign },
+    { label: '(', onClick: () => handleParenthesis('(') },
+    { label: ')', onClick: () => handleParenthesis(')') },
     { label: '/', onClick: () => handleOperator('/') },
     { label: '7', onClick: () => inputDigit(7) },
     { label: '8', onClick: () => inputDigit(8) },

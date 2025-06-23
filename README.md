@@ -19,4 +19,7 @@ and it will pick up the correct version from `.nvmrc`.
    ```
 3. Open `http://localhost:3000` in your browser.
 
+The calculator supports parentheses using the `(` and `)` buttons so you can
+enter expressions like `(1 + 2) * 3`.
+
 Use `npm run build` to create a production build.
