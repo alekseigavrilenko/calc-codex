@@ -7,6 +7,7 @@ function Calculator() {
   const [waitingForNew, setWaitingForNew] = useState(false)
   const [afterEqual, setAfterEqual] = useState(false)
   const [memory, setMemory] = useState(null)
+  const [history, setHistory] = useState([])
 
   const evaluate = (expr) =>
     Function(`"use strict"; return (${expr.replace(/\^/g, '**')})`)()
@@ -116,6 +117,7 @@ function Calculator() {
       const result = evaluate(expr)
       setDisplay(String(result))
       setExpression(expr + '=')
+      setHistory((h) => [...h, `${expr} = ${result}`])
     } catch {
       setDisplay('Error')
       setExpression('')
@@ -128,10 +130,14 @@ function Calculator() {
   const memoryRecall = () => {
     if (memory !== null) setDisplay(String(memory))
   }
-  const memoryAdd = () =>
+  const memoryAdd = () => {
     setMemory((m) => (m === null ? parseFloat(display) : m + parseFloat(display)))
-  const memorySubtract = () =>
+    setAfterEqual(true)
+  }
+  const memorySubtract = () => {
     setMemory((m) => (m === null ? -parseFloat(display) : m - parseFloat(display)))
+    setAfterEqual(true)
+  }
   const memoryStore = () => setMemory(parseFloat(display))
 
   const factorial = (n) => {
@@ -221,25 +227,32 @@ function Calculator() {
   ]
 
   return (
-    <div className="calculator">
-      <div className="top-row">
-        <div className="memory">{memory !== null ? memory : '\u00A0'}</div>
-        <div className="expression">{expression || '\u00A0'}</div>
+    <>
+      <div className="calculator">
+        <div className="top-row">
+          <div className="memory">{memory !== null ? memory : '\u00A0'}</div>
+          <div className="expression">{expression || '\u00A0'}</div>
+        </div>
+        <div className="display">{display}</div>
+        <div className="buttons">
+          {buttons.map((btn) => (
+            <button
+              key={btn.label}
+              className={btn.className}
+              onClick={btn.onClick}
+              disabled={btn.disabled}
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="display">{display}</div>
-      <div className="buttons">
-        {buttons.map((btn) => (
-          <button
-            key={btn.label}
-            className={btn.className}
-            onClick={btn.onClick}
-            disabled={btn.disabled}
-          >
-            {btn.label}
-          </button>
+      <div className="history">
+        {history.map((h, i) => (
+          <div key={i}>{h}</div>
         ))}
       </div>
-    </div>
+    </>
   )
 }
 

@@ -25,4 +25,7 @@ enter expressions like `(1 + 2) * 3`. Additional functions such as `1/x`,
 buttons. The current memory value appears on the left side of the display and
 the `MS` and `MR` buttons are disabled when no memory is stored.
 
+Recent calculations are listed in a history panel to the right of the
+calculator.
+
 Use `npm run build` to create a production build.
