@@ -20,6 +20,8 @@ and it will pick up the correct version from `.nvmrc`.
 3. Open `http://localhost:3000` in your browser.
 
 The calculator supports parentheses using the `(` and `)` buttons so you can
-enter expressions like `(1 + 2) * 3`.
+enter expressions like `(1 + 2) * 3`. Additional functions such as `1/x`,
+`x!`, `x^2`, `x^y`, and square root are available from their respective
+buttons.
 
 Use `npm run build` to create a production build.
