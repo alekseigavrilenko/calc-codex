@@ -21,13 +21,26 @@
   overflow: hidden;
 }
 
+.top-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.memory,
 .expression {
-  text-align: right;
   font-size: 0.9rem;
   color: #ccc;
   min-height: 20px;
   padding: 0 10px 5px;
   overflow: hidden;
+}
+
+.memory {
+  text-align: left;
+}
+
+.expression {
+  text-align: right;
 }
 
 .buttons {

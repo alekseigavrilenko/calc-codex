@@ -6,7 +6,7 @@ function Calculator() {
   const [expression, setExpression] = useState('')
   const [waitingForNew, setWaitingForNew] = useState(false)
   const [afterEqual, setAfterEqual] = useState(false)
-  const [memory, setMemory] = useState(0)
+  const [memory, setMemory] = useState(null)
 
   const evaluate = (expr) =>
     Function(`"use strict"; return (${expr.replace(/\^/g, '**')})`)()
@@ -124,10 +124,14 @@ function Calculator() {
     setWaitingForNew(false)
   }
 
-  const memoryClear = () => setMemory(0)
-  const memoryRecall = () => setDisplay(String(memory))
-  const memoryAdd = () => setMemory((m) => m + parseFloat(display))
-  const memorySubtract = () => setMemory((m) => m - parseFloat(display))
+  const memoryClear = () => setMemory(null)
+  const memoryRecall = () => {
+    if (memory !== null) setDisplay(String(memory))
+  }
+  const memoryAdd = () =>
+    setMemory((m) => (m === null ? parseFloat(display) : m + parseFloat(display)))
+  const memorySubtract = () =>
+    setMemory((m) => (m === null ? -parseFloat(display) : m - parseFloat(display)))
   const memoryStore = () => setMemory(parseFloat(display))
 
   const factorial = (n) => {
@@ -178,10 +182,10 @@ function Calculator() {
 
   const buttons = [
     { label: 'MC', onClick: memoryClear },
-    { label: 'MR', onClick: memoryRecall },
+    { label: 'MR', onClick: memoryRecall, disabled: memory === null },
     { label: 'M+', onClick: memoryAdd },
     { label: 'M-', onClick: memorySubtract },
-    { label: 'MS', onClick: memoryStore },
+    { label: 'MS', onClick: memoryStore, disabled: memory === null },
 
     { label: 'CE', onClick: clearEntry },
     { label: 'C', onClick: clearAll },
@@ -218,7 +222,10 @@ function Calculator() {
 
   return (
     <div className="calculator">
-      <div className="expression">{expression || '\u00A0'}</div>
+      <div className="top-row">
+        <div className="memory">{memory !== null ? memory : '\u00A0'}</div>
+        <div className="expression">{expression || '\u00A0'}</div>
+      </div>
       <div className="display">{display}</div>
       <div className="buttons">
         {buttons.map((btn) => (
@@ -226,6 +233,7 @@ function Calculator() {
             key={btn.label}
             className={btn.className}
             onClick={btn.onClick}
+            disabled={btn.disabled}
           >
             {btn.label}
           </button>

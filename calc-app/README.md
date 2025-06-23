@@ -17,4 +17,5 @@ you want to customize the build further.
 
 The calculator UI includes `(` and `)` buttons for grouping as well as
 advanced functions (`1/x`, `x!`, `x^2`, `x^y`, `√`) for more complex
-calculations.
+calculations. The memory value is shown in the top-left corner and the `MS`
+and `MR` buttons are disabled until something has been stored.
