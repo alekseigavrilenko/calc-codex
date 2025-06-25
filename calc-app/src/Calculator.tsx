@@ -1,18 +1,25 @@
 import { useState } from 'react'
 import './Calculator.css'
 
-function Calculator() {
-  const [display, setDisplay] = useState('0')
-  const [expression, setExpression] = useState('')
-  const [waitingForNew, setWaitingForNew] = useState(false)
-  const [afterEqual, setAfterEqual] = useState(false)
-  const [memory, setMemory] = useState(null)
-  const [history, setHistory] = useState([])
+interface Button {
+  label: string
+  onClick: () => void
+  className?: string
+  disabled?: boolean
+}
 
-  const evaluate = (expr) =>
+function Calculator() {
+  const [display, setDisplay] = useState<string>('0')
+  const [expression, setExpression] = useState<string>('')
+  const [waitingForNew, setWaitingForNew] = useState<boolean>(false)
+  const [afterEqual, setAfterEqual] = useState<boolean>(false)
+  const [memory, setMemory] = useState<number | null>(null)
+  const [history, setHistory] = useState<string[]>([])
+
+  const evaluate = (expr: string): number =>
     Function(`"use strict"; return (${expr.replace(/\^/g, '**')})`)()
 
-  const inputDigit = (digit) => {
+  const inputDigit = (digit: number): void => {
     if (afterEqual) {
       setExpression(String(digit))
       setDisplay(String(digit))
@@ -31,7 +38,7 @@ function Calculator() {
     }
   }
 
-  const inputDecimal = () => {
+  const inputDecimal = (): void => {
     if (afterEqual) {
       setDisplay('0.')
       setExpression('0.')
@@ -51,23 +58,23 @@ function Calculator() {
     }
   }
 
-  const clearAll = () => {
+  const clearAll = (): void => {
     setDisplay('0')
     setExpression('')
     setWaitingForNew(false)
     setAfterEqual(false)
   }
 
-  const clearEntry = () => {
+  const clearEntry = (): void => {
     setDisplay('0')
     setWaitingForNew(true)
   }
 
-  const toggleSign = () => {
+  const toggleSign = (): void => {
     setDisplay(String(parseFloat(display) * -1))
   }
 
-  const handleParenthesis = (paren) => {
+  const handleParenthesis = (paren: string): void => {
     if (afterEqual) {
       setExpression(paren)
       setDisplay('0')
@@ -88,7 +95,7 @@ function Calculator() {
     }
   }
 
-  const handleOperator = (nextOperator) => {
+  const handleOperator = (nextOperator: string): void => {
     if (afterEqual) {
       setExpression(display + nextOperator)
       setAfterEqual(false)
@@ -111,7 +118,7 @@ function Calculator() {
     setWaitingForNew(true)
   }
 
-  const handleEqual = () => {
+  const handleEqual = (): void => {
     try {
       const expr = waitingForNew ? expression.slice(0, -1) : expression
       const result = evaluate(expr)
@@ -126,31 +133,31 @@ function Calculator() {
     setWaitingForNew(false)
   }
 
-  const memoryClear = () => setMemory(null)
-  const memoryRecall = () => {
+  const memoryClear = (): void => setMemory(null)
+  const memoryRecall = (): void => {
     if (memory !== null) setDisplay(String(memory))
   }
-  const memoryAdd = () => {
+  const memoryAdd = (): void => {
     setMemory((m) => (m === null ? parseFloat(display) : m + parseFloat(display)))
     setAfterEqual(true)
   }
-  const memorySubtract = () => {
+  const memorySubtract = (): void => {
     setMemory((m) => (m === null ? -parseFloat(display) : m - parseFloat(display)))
     setAfterEqual(true)
   }
-  const memoryStore = () => setMemory(parseFloat(display))
+  const memoryStore = (): void => setMemory(parseFloat(display))
 
-  const factorial = (n) => {
+  const factorial = (n: number): number => {
     if (n < 0 || !Number.isInteger(n)) return NaN
     let res = 1
     for (let i = 2; i <= n; i++) res *= i
     return res
   }
 
-  const applyUnary = (op) => {
+  const applyUnary = (op: string): void => {
     const value = parseFloat(display)
-    let result
-    let exprPart
+    let result: number
+    let exprPart: string
 
     switch (op) {
       case 'recip':
@@ -186,7 +193,7 @@ function Calculator() {
     setWaitingForNew(false)
   }
 
-  const buttons = [
+  const buttons: Button[] = [
     { label: 'MC', onClick: memoryClear },
     { label: 'MR', onClick: memoryRecall, disabled: memory === null },
     { label: 'M+', onClick: memoryAdd },
